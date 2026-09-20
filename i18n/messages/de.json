@@ -1,13 +1,1 @@
-{
-  "navigation": { "home": "Startseite", "music": "Musik", "concerts": "Konzerte", "about": "Über uns" },
-  "hero": {
-    "eyebrow": "Offizielle Website",
-    "title": "Zhadan & Company",
-    "description": "Musik, neue Veröffentlichungen und kommende Konzerte.",
-    "primaryAction": "Konzerte ansehen",
-    "secondaryAction": "Musik hören"
-  },
-  "language": "Sprache",
-  "footer": "Zhadan & Company",
-  "location": "Charkiw, Ukraine"
-}
+{"navigation":{"services":"Leistungen","works":"Referenzen","order":"Buchen","about":"Über uns","reviews":"Bewertungen","contacts":"Kontakt"},"hero":{"eyebrow":"Kanton Bern · Schweiz","title":"Umziehen ohne Sorgen.","description":"Wir transportieren Möbel und persönliche Sachen, liefern Einkäufe, montieren Möbel und reinigen Wohnungen.","primaryAction":"Leistung buchen","secondaryAction":"Unsere Arbeiten","coverageLabel":"Einsatzgebiet","coverage":"Bern und alle Gemeinden des Kantons"},"services":{"title":"Leistungen","description":"Komplette Lösungen für Umzug, Einrichtung und Reinigung.","items":{"moving":{"title":"Umzüge","description":"Sorgfältiger Transport von Möbeln und persönlichen Sachen."},"delivery":{"title":"Lieferung","description":"Lieferung von Möbeln, Geräten und Einkäufen zu Ihrer Adresse."},"assembly":{"title":"Möbelmontage","description":"Professionelle Montage und Demontage von Möbeln."},"cleaning":{"title":"Reinigung","description":"Grund- und Endreinigung vor oder nach dem Auszug."}}},"process":{"title":"So funktioniert es","description":"Ein einfacher und transparenter Ablauf.","steps":{"request":{"title":"Anfrage senden","description":"Leistung, Adressen und Wunschtermin angeben."},"details":{"title":"Details klären","description":"Wir kontaktieren Sie und erstellen ein persönliches Angebot."},"service":{"title":"Team empfangen","description":"Das Team kommt pünktlich und erledigt die vereinbarten Arbeiten."}}},"order":{"title":"Was dürfen wir für Sie tun?","description":"Füllen Sie das kurze Formular aus. Wir klären die Details und erstellen ein Angebot."},"language":"Sprache","footer":"Firmenname","location":"Bern, Schweiz"}

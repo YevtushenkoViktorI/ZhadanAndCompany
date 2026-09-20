@@ -1,13 +1,1 @@
-{
-  "navigation": { "home": "Home", "music": "Music", "concerts": "Concerts", "about": "About" },
-  "hero": {
-    "eyebrow": "Official website",
-    "title": "Zhadan & Company",
-    "description": "Music, new releases and upcoming concerts.",
-    "primaryAction": "View concerts",
-    "secondaryAction": "Listen to music"
-  },
-  "language": "Language",
-  "footer": "Zhadan & Company",
-  "location": "Kharkiv, Ukraine"
-}
+{"navigation":{"services":"Services","works":"Our work","order":"Book","about":"About us","reviews":"Reviews","contacts":"Contact"},"hero":{"eyebrow":"Canton of Bern · Switzerland","title":"Moving without the stress.","description":"We move furniture and personal belongings, deliver purchases, assemble furniture and clean homes.","primaryAction":"Book a service","secondaryAction":"Our work","coverageLabel":"Service area","coverage":"Bern and all municipalities in the canton"},"services":{"title":"Services","description":"A complete range of solutions for moving, furnishing and cleaning your home.","items":{"moving":{"title":"Moving","description":"Careful transport of furniture and belongings between homes and offices."},"delivery":{"title":"Delivery","description":"Delivery of furniture, appliances and store purchases to your address."},"assembly":{"title":"Furniture assembly","description":"Professional assembly and disassembly of furniture and modular systems."},"cleaning":{"title":"Cleaning","description":"Deep and final cleaning before or after moving out."}}},"process":{"title":"How it works","description":"A simple and transparent process without unnecessary paperwork.","steps":{"request":{"title":"Send a request","description":"Specify the service, addresses and date, and add photos if needed."},"details":{"title":"Confirm the details","description":"We contact you and prepare a personal offer."},"service":{"title":"Meet the team","description":"The team arrives on time and completes the agreed work."}}},"order":{"title":"Tell us what needs to be done","description":"Complete the short form and we will clarify the details and prepare an individual offer."},"language":"Language","footer":"Company name","location":"Bern, Switzerland"}

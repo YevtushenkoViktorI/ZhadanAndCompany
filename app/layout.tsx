@@ -25,10 +25,10 @@ const notoSansArabic = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Жадан і Компанія",
-    template: "%s — Жадан і Компанія",
+    default: "Послуги переїзду та прибирання в Берні",
+    template: "%s — Берн",
   },
-  description: "Офіційний сайт гурту «Жадан і Компанія».",
+  description: "Переїзди, доставка, складання меблів і прибирання в кантоні Берн.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",

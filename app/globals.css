@@ -3,15 +3,15 @@
 @import "../vendor/shadcn-tailwind-4.13.0.css";
 
 :root {
-  --background: #0c0c0c;
-  --foreground: #f4f0e8;
-  --surface: #171717;
-  --surface-strong: #222222;
-  --muted: #aaa49a;
-  --accent: #e14a2d;
-  --accent-strong: #ff5a38;
-  --border: #34312e;
-  --radius: 0.375rem;
+  --background: #fafaf8;
+  --foreground: #1d1d1f;
+  --surface: #ffffff;
+  --surface-strong: #f5f4f1;
+  --muted: #68686d;
+  --accent: #d52b1e;
+  --accent-strong: #b62318;
+  --border: #e4e3df;
+  --radius: 0.875rem;
 }
 
 @theme inline {
@@ -45,6 +45,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-manrope), sans-serif;
+}
+
+a,
+button,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 [dir="rtl"] {

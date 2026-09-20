@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { publicBasePath } from "@/config/site";
 import "./globals.css";
 
 const manrope = localFont({
@@ -30,8 +31,8 @@ export const metadata: Metadata = {
   },
   description: "Переїзди, доставка, складання меблів і прибирання в кантоні Берн.",
   icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
+    icon: `${publicBasePath}/favicon.svg`,
+    shortcut: `${publicBasePath}/favicon.svg`,
   },
 };
 

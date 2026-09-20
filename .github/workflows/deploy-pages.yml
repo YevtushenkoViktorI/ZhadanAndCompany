@@ -38,6 +38,9 @@ jobs:
         env:
           NEXT_PUBLIC_BASE_PATH: /ZhadanAndCompany
 
+      - name: Prepare project assets
+        run: node scripts/prepare-github-pages.mjs
+
       - name: Disable Jekyll
         run: touch dist/client/.nojekyll
 

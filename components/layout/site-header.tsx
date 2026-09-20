@@ -7,7 +7,7 @@ import { LanguageSwitcher } from "./language-switcher";
 import { MobileNavigation } from "./mobile-navigation";
 
 export function SiteHeader({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
-  const navigation = [["services", "services"], ["works", "works"], ["order", "order"], ["about", "about"], ["reviews", "reviews"], ["contacts", "contacts"]] as const;
+  const navigation = [["services", "services"], ["works", "works"], ["order", "order"], ["about", "about"], ["contacts", "contacts"]] as const;
   return (
     <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-md">
       <Container className="flex h-20 items-center justify-between gap-8">

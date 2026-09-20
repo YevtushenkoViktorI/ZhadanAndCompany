@@ -4,7 +4,7 @@ import { Hero } from "@/components/home/hero";
 import { OrderForm } from "@/components/home/order-form";
 import { ProcessSection } from "@/components/home/process-section";
 import { ServicesSection } from "@/components/home/services-section";
-import { AboutSection, ReviewsSection, WorksSection } from "@/components/home/company-sections";
+import { AboutSection, WorksSection } from "@/components/home/company-sections";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 
@@ -31,5 +31,5 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dictionary = await getDictionary(locale);
-  return <><Hero content={dictionary.hero} /><ServicesSection dictionary={dictionary} /><WorksSection dictionary={dictionary} /><OrderForm locale={locale} dictionary={dictionary} /><ProcessSection dictionary={dictionary} /><AboutSection dictionary={dictionary} /><ReviewsSection dictionary={dictionary} /></>;
+  return <><Hero content={dictionary.hero} /><ServicesSection dictionary={dictionary} /><WorksSection locale={locale} dictionary={dictionary} /><OrderForm locale={locale} dictionary={dictionary} /><ProcessSection dictionary={dictionary} /><AboutSection locale={locale} dictionary={dictionary} /></>;
 }

@@ -10,8 +10,12 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
 
   function localizedPath(nextLocale: Locale) {
     const segments = pathname.split("/");
-    segments[1] = nextLocale;
-    return segments.join("/") || `/${nextLocale}`;
+    const localeIndex = segments.findIndex((segment) => locales.includes(segment as Locale));
+    if (localeIndex >= 0) {
+      segments[localeIndex] = nextLocale;
+      return segments.join("/");
+    }
+    return `/${nextLocale}/`;
   }
 
   return (

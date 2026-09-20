@@ -103,9 +103,11 @@ success-стан. Реальне надсилання та завантажен�
 
 ### 4. Демонстраційна публікація
 
-- Статичний export для GitHub Pages або preview на Cloudflare/Vercel.
-- Автоматична публікація після push у `main`.
-- Перевірка мовних URL, assets і форми в preview-середовищі.
+- ✅ Налаштовано статичний export для GitHub Pages.
+- ✅ Додано GitHub Actions workflow для автоматичної публікації після push у `main`.
+- ✅ Налаштовано project path `/ZhadanAndCompany` і згенеровано 19 мовних сторінок.
+- ⏳ Потрібно вибрати `GitHub Actions` у Settings → Pages та виконати push.
+- ⏳ Після deployment перевірити мовні URL, assets і форму у відкритому Pages-середовищі.
 
 ## ◻️ Не розпочато
 

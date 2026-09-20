@@ -1,0 +1,13 @@
+{
+  "navigation": { "home": "Startseite", "music": "Musik", "concerts": "Konzerte", "about": "Über uns" },
+  "hero": {
+    "eyebrow": "Offizielle Website",
+    "title": "Zhadan & Company",
+    "description": "Musik, neue Veröffentlichungen und kommende Konzerte.",
+    "primaryAction": "Konzerte ansehen",
+    "secondaryAction": "Musik hören"
+  },
+  "language": "Sprache",
+  "footer": "Zhadan & Company",
+  "location": "Charkiw, Ukraine"
+}

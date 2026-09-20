@@ -1,0 +1,13 @@
+{
+  "navigation": { "home": "Home", "music": "Music", "concerts": "Concerts", "about": "About" },
+  "hero": {
+    "eyebrow": "Official website",
+    "title": "Zhadan & Company",
+    "description": "Music, new releases and upcoming concerts.",
+    "primaryAction": "View concerts",
+    "secondaryAction": "Listen to music"
+  },
+  "language": "Language",
+  "footer": "Zhadan & Company",
+  "location": "Kharkiv, Ukraine"
+}

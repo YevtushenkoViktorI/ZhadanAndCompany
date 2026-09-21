@@ -14,6 +14,7 @@ import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { formCopy } from "@/i18n/form-copy";
 import { getOrderFieldCopy } from "@/i18n/order-field-copy";
+import { getElectricalCopy } from "@/i18n/electrical-copy";
 import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
@@ -24,6 +25,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const [submitted, setSubmitted] = useState(false);
   const copy = formCopy[locale];
   const fields = getOrderFieldCopy(locale);
+  const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
@@ -57,7 +59,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                 {services.map(({ id }) => (
                   <button key={id} type="button" onClick={() => setService(id)} aria-pressed={service === id}
                     className="rounded-full border border-black/10 px-4 py-2.5 text-sm font-semibold transition-colors aria-pressed:border-[#1d1d1f] aria-pressed:bg-[#1d1d1f] aria-pressed:text-white">
-                    {dictionary.services.items[id].title}
+                    {id === "electrical" ? electrical.title : dictionary.services.items[id].title}
                   </button>
                 ))}
                 <button type="button" onClick={() => setService("combo")} aria-pressed={service === "combo"}
@@ -75,7 +77,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                   </>
                 ) : <Field label={copy.address} className="sm:col-span-2"><Input name="address" required className="h-12 rounded-xl bg-[#fafaf8]" /></Field>}
 
-                <ServiceFields service={service} fields={fields} />
+                <ServiceFields service={service} fields={fields} electrical={electrical} />
 
                 <Field label={copy.name}><Input name="name" autoComplete="name" required className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
                 <Field label={copy.phone}><Input name="phone" type="tel" autoComplete="tel" required className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
@@ -114,7 +116,7 @@ function Field({ label, className, children }: { label: string; className?: stri
   return <label className={className}><span className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#4d4d50]">{label}</span>{children}</label>;
 }
 
-function ServiceFields({ service, fields }: { service: OrderType; fields: ReturnType<typeof getOrderFieldCopy> }) {
+function ServiceFields({ service, fields, electrical }: { service: OrderType; fields: ReturnType<typeof getOrderFieldCopy>; electrical: ReturnType<typeof getElectricalCopy> }) {
   if (service === "moving") {
     return <>
       <Field label={fields.rooms}><Input name="rooms" className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
@@ -148,6 +150,15 @@ function ServiceFields({ service, fields }: { service: OrderType; fields: Return
       <Field label={fields.furnitureType}><Input name="furnitureType" required className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
       <Field label={fields.manufacturer}><Input name="manufacturer" className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
       <Field label={fields.quantity}><Input name="quantity" inputMode="numeric" className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
+    </>;
+  }
+
+  if (service === "electrical") {
+    return <>
+      <Field label={electrical.workType} className="sm:col-span-2"><Input name="electricalWork" required className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
+      <Field label={electrical.quantity}><Input name="fixtureQuantity" inputMode="numeric" className="h-12 rounded-xl bg-[#fafaf8]" /></Field>
+      <div className="flex items-end pb-3"><label className="flex cursor-pointer items-center gap-2 text-sm text-[#4d4d50]"><Checkbox name="materialsReady" /><span>{electrical.materialsReady}</span></label></div>
+      <p className="sm:col-span-2 text-sm leading-relaxed text-[#68686d]">{electrical.safetyNote}</p>
     </>;
   }
 

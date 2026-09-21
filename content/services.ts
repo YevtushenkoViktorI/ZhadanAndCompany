@@ -5,4 +5,5 @@ export const services: ServiceDefinition[] = [
   { id: "delivery", icon: "package" },
   { id: "assembly", icon: "tool" },
   { id: "cleaning", icon: "sparkles" },
+  { id: "electrical", icon: "lightbulb" },
 ];

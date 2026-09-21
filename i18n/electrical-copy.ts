@@ -1,0 +1,36 @@
+import type { Locale } from "./config";
+
+type ElectricalCopy = {
+  title: string;
+  description: string;
+  workType: string;
+  quantity: string;
+  materialsReady: string;
+  safetyNote: string;
+};
+
+const copy: Record<Locale, ElectricalCopy> = {
+  uk: { title: "Дрібні електричні роботи", description: "Заміна ламп, монтаж світильників та інші нескладні побутові роботи.", workType: "Що потрібно встановити або замінити?", quantity: "Кількість ламп або світильників", materialsReady: "Лампи або світильники вже придбані", safetyNote: "Складні роботи з електрощитом і проводкою узгоджуємо окремо." },
+  en: { title: "Minor electrical work", description: "Replacing bulbs, installing light fixtures and other simple household jobs.", workType: "What needs to be installed or replaced?", quantity: "Number of bulbs or fixtures", materialsReady: "Bulbs or fixtures are already available", safetyNote: "Work on electrical panels or wiring is assessed separately." },
+  de: { title: "Kleine Elektroarbeiten", description: "Leuchtmittel wechseln, Lampen montieren und weitere einfache Arbeiten im Haushalt.", workType: "Was soll montiert oder ersetzt werden?", quantity: "Anzahl Leuchtmittel oder Lampen", materialsReady: "Leuchtmittel oder Lampen sind bereits vorhanden", safetyNote: "Arbeiten an Elektroverteilungen oder Leitungen klären wir separat." },
+  fr: { title: "Petits travaux électriques", description: "Remplacement d’ampoules, pose de luminaires et autres petits travaux domestiques.", workType: "Que faut-il installer ou remplacer ?", quantity: "Nombre d’ampoules ou de luminaires", materialsReady: "Les ampoules ou luminaires sont déjà disponibles", safetyNote: "Les travaux sur tableaux électriques ou câblage sont évalués séparément." },
+  it: { title: "Piccoli lavori elettrici", description: "Sostituzione di lampadine, montaggio di lampade e altri semplici lavori domestici.", workType: "Cosa bisogna installare o sostituire?", quantity: "Numero di lampadine o lampade", materialsReady: "Lampadine o lampade sono già disponibili", safetyNote: "I lavori su quadri elettrici o cablaggi vengono valutati separatamente." },
+  et: { title: "Väikesed elektritööd", description: "Pirnide vahetamine, valgustite paigaldamine ja muud lihtsad kodutööd.", workType: "Mida tuleb paigaldada või vahetada?", quantity: "Pirnide või valgustite arv", materialsReady: "Pirnid või valgustid on juba olemas", safetyNote: "Elektrikilbi ja juhtmestiku tööd hindame eraldi." },
+  pl: { title: "Drobne prace elektryczne", description: "Wymiana żarówek, montaż lamp i inne proste prace domowe.", workType: "Co trzeba zamontować lub wymienić?", quantity: "Liczba żarówek lub lamp", materialsReady: "Żarówki lub lampy są już kupione", safetyNote: "Prace przy rozdzielnicy lub instalacji elektrycznej ustalamy osobno." },
+  lt: { title: "Smulkūs elektros darbai", description: "Lempučių keitimas, šviestuvų montavimas ir kiti nesudėtingi buities darbai.", workType: "Ką reikia sumontuoti arba pakeisti?", quantity: "Lempučių arba šviestuvų skaičius", materialsReady: "Lemputės arba šviestuvai jau nupirkti", safetyNote: "Darbus su elektros skydais ar instaliacija vertiname atskirai." },
+  lv: { title: "Nelieli elektrības darbi", description: "Spuldžu nomaiņa, gaismekļu uzstādīšana un citi vienkārši mājas darbi.", workType: "Kas jāuzstāda vai jānomaina?", quantity: "Spuldžu vai gaismekļu skaits", materialsReady: "Spuldzes vai gaismekļi jau ir iegādāti", safetyNote: "Darbus ar elektrības sadali vai elektroinstalāciju izvērtējam atsevišķi." },
+  cs: { title: "Drobné elektropráce", description: "Výměna žárovek, montáž svítidel a další jednoduché práce v domácnosti.", workType: "Co je potřeba namontovat nebo vyměnit?", quantity: "Počet žárovek nebo svítidel", materialsReady: "Žárovky nebo svítidla jsou již zakoupené", safetyNote: "Práce na rozvaděči nebo elektroinstalaci posuzujeme samostatně." },
+  es: { title: "Pequeños trabajos eléctricos", description: "Cambio de bombillas, instalación de lámparas y otras tareas domésticas sencillas.", workType: "¿Qué hay que instalar o sustituir?", quantity: "Número de bombillas o lámparas", materialsReady: "Las bombillas o lámparas ya están disponibles", safetyNote: "Los trabajos en cuadros eléctricos o cableado se evalúan por separado." },
+  tr: { title: "Küçük elektrik işleri", description: "Ampul değiştirme, aydınlatma montajı ve diğer basit ev işleri.", workType: "Ne kurulmalı veya değiştirilmeli?", quantity: "Ampul veya aydınlatma sayısı", materialsReady: "Ampuller veya aydınlatmalar hazır", safetyNote: "Elektrik panosu veya tesisat işleri ayrıca değerlendirilir." },
+  ar: { title: "أعمال كهربائية بسيطة", description: "تبديل المصابيح وتركيب وحدات الإضاءة وغيرها من الأعمال المنزلية البسيطة.", workType: "ما الذي يجب تركيبه أو استبداله؟", quantity: "عدد المصابيح أو وحدات الإضاءة", materialsReady: "المصابيح أو وحدات الإضاءة متوفرة بالفعل", safetyNote: "يتم تقييم أعمال لوحات الكهرباء أو الأسلاك بشكل منفصل." },
+  "nl-BE": { title: "Kleine elektriciteitswerken", description: "Lampen vervangen, verlichting plaatsen en andere eenvoudige huishoudelijke werken.", workType: "Wat moet worden geplaatst of vervangen?", quantity: "Aantal lampen of armaturen", materialsReady: "Lampen of armaturen zijn al beschikbaar", safetyNote: "Werk aan zekeringkasten of bekabeling beoordelen we afzonderlijk." },
+  sk: { title: "Drobné elektropráce", description: "Výmena žiaroviek, montáž svietidiel a ďalšie jednoduché práce v domácnosti.", workType: "Čo treba namontovať alebo vymeniť?", quantity: "Počet žiaroviek alebo svietidiel", materialsReady: "Žiarovky alebo svietidlá sú už zakúpené", safetyNote: "Práce na rozvádzači alebo elektroinštalácii posudzujeme samostatne." },
+  hu: { title: "Kisebb villanyszerelési munkák", description: "Izzócsere, lámpák felszerelése és más egyszerű háztartási munkák.", workType: "Mit kell felszerelni vagy kicserélni?", quantity: "Izzók vagy lámpatestek száma", materialsReady: "Az izzók vagy lámpatestek már rendelkezésre állnak", safetyNote: "Az elosztótáblán vagy vezetékezésen végzett munkát külön mérjük fel." },
+  ro: { title: "Lucrări electrice mici", description: "Înlocuirea becurilor, montarea corpurilor de iluminat și alte lucrări casnice simple.", workType: "Ce trebuie montat sau înlocuit?", quantity: "Numărul de becuri sau corpuri de iluminat", materialsReady: "Becurile sau corpurile sunt deja disponibile", safetyNote: "Lucrările la tablouri electrice sau cablaj se evaluează separat." },
+  sr: { title: "Ситни електричарски радови", description: "Замена сијалица, монтажа расвете и други једноставни кућни радови.", workType: "Шта треба монтирати или заменити?", quantity: "Број сијалица или светиљки", materialsReady: "Сијалице или светиљке су већ набављене", safetyNote: "Радове на разводној табли или инсталацијама процењујемо посебно." },
+  bg: { title: "Дребни електрически работи", description: "Смяна на крушки, монтаж на осветителни тела и други лесни домашни задачи.", workType: "Какво трябва да се монтира или смени?", quantity: "Брой крушки или осветителни тела", materialsReady: "Крушките или осветителните тела са осигурени", safetyNote: "Работата по електрически табла или инсталации се оценява отделно." },
+};
+
+export function getElectricalCopy(locale: Locale) {
+  return copy[locale];
+}

@@ -31,5 +31,5 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dictionary = await getDictionary(locale);
-  return <><Hero content={dictionary.hero} /><ServicesSection dictionary={dictionary} /><WorksSection locale={locale} dictionary={dictionary} /><OrderForm locale={locale} dictionary={dictionary} /><ProcessSection dictionary={dictionary} /><AboutSection locale={locale} dictionary={dictionary} /></>;
+  return <><Hero content={dictionary.hero} /><ServicesSection locale={locale} dictionary={dictionary} /><WorksSection locale={locale} dictionary={dictionary} /><OrderForm locale={locale} dictionary={dictionary} /><ProcessSection dictionary={dictionary} /><AboutSection locale={locale} dictionary={dictionary} /></>;
 }

@@ -35,7 +35,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   }
 
   return (
-    <section id="order" className="bg-[#f5f4f1] py-16 text-[#1d1d1f] sm:py-24">
+    <section id="order" className="scroll-mt-20 bg-[#f5f4f1] py-16 text-[#1d1d1f] sm:py-24">
       <Container className="max-w-5xl">
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d52b1e]">{dictionary.hero.eyebrow}</p>

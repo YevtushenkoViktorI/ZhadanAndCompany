@@ -17,14 +17,18 @@ export function SiteHeader({ locale, dictionary }: { locale: Locale; dictionary:
         </Link>
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
           {navigation.map(([label, href]) => (
-            <Link key={label} href={localizedHref(locale, href)} className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            <a
+              key={label}
+              href={`#${href}`}
+              className="rounded-full border border-transparent px-3 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-[#d52b1e]/35 hover:bg-[#d52b1e]/5 hover:text-foreground hover:shadow-sm active:translate-y-0 active:scale-[0.98]"
+            >
               {dictionary.navigation[label]}
-            </Link>
+            </a>
           ))}
         </nav>
         <div className="flex items-center gap-2">
           <LanguageSwitcher locale={locale} label={dictionary.language} />
-          <MobileNavigation locale={locale} dictionary={dictionary} navigation={navigation} />
+          <MobileNavigation dictionary={dictionary} navigation={navigation} />
         </div>
       </Container>
     </header>

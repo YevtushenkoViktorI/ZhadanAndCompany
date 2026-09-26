@@ -7,6 +7,7 @@ import { ServicesSection } from "@/components/home/services-section";
 import { AboutSection, WorksSection } from "@/components/home/company-sections";
 import { isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
+import { getHeroDescription } from "@/i18n/hero-copy";
 
 export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
   return {
     title: dictionary.hero.title,
-    description: dictionary.hero.description,
+    description: getHeroDescription(locale),
     alternates: {
       canonical: `/${locale}`,
       languages: Object.fromEntries(locales.map((item) => [item, `/${item}`])),
@@ -31,5 +32,5 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dictionary = await getDictionary(locale);
-  return <><Hero content={dictionary.hero} /><ServicesSection locale={locale} dictionary={dictionary} /><WorksSection locale={locale} dictionary={dictionary} /><OrderForm locale={locale} dictionary={dictionary} /><ProcessSection dictionary={dictionary} /><AboutSection locale={locale} dictionary={dictionary} /></>;
+  return <><Hero locale={locale} content={dictionary.hero} /><ServicesSection locale={locale} dictionary={dictionary} /><WorksSection locale={locale} dictionary={dictionary} /><OrderForm locale={locale} dictionary={dictionary} /><ProcessSection dictionary={dictionary} /><AboutSection locale={locale} dictionary={dictionary} /></>;
 }

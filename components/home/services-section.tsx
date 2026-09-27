@@ -21,7 +21,7 @@ export function ServicesSection({ locale, dictionary }: { locale: Locale; dictio
             return (
               <article
                 key={service.id}
-                className="group overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#d52b1e]/35 hover:shadow-xl"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#d52b1e]/35 hover:shadow-xl"
               >
                 <div className="relative aspect-[4/3] overflow-hidden bg-[#e8e7e3]">
                   <img
@@ -31,10 +31,10 @@ export function ServicesSection({ locale, dictionary }: { locale: Locale; dictio
                     loading="lazy"
                   />
                 </div>
-                <div className="p-6">
+                <div className="flex flex-1 flex-col p-6">
                   <h3 className="text-xl font-bold">{content.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-[#68686d]">{content.description}</p>
-                  <a href="#order" className="mt-5 inline-block text-sm font-bold text-[#d52b1e]">
+                  <a href="#order" className="mt-auto inline-block pt-5 text-sm font-bold text-[#d52b1e]">
                     {dictionary.hero.primaryAction} →
                   </a>
                 </div>

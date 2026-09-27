@@ -31,8 +31,8 @@ export const metadata: Metadata = {
   },
   description: "Переїзди у Швейцарії та за кордон, доставка, складання меблів, прибирання й побутова допомога.",
   icons: {
-    icon: `${publicBasePath}/favicon.svg`,
-    shortcut: `${publicBasePath}/favicon.svg`,
+    icon: `${publicBasePath}/images/brand/umzughilfe-logo.png`,
+    shortcut: `${publicBasePath}/images/brand/umzughilfe-logo.png`,
   },
 };
 

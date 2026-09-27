@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Container } from "@/components/shared/container";
 import type { Locale } from "@/i18n/config";
 import type { Dictionary } from "@/i18n/dictionaries";
-import { localizedHref, siteConfig } from "@/config/site";
+import { localizedHref, publicBasePath, siteConfig } from "@/config/site";
 import { LanguageSwitcher } from "./language-switcher";
 import { MobileNavigation } from "./mobile-navigation";
 
@@ -12,7 +12,12 @@ export function SiteHeader({ locale, dictionary }: { locale: Locale; dictionary:
     <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-md">
       <Container className="flex h-20 items-center justify-between gap-8">
         <Link href={localizedHref(locale)} className="flex items-center gap-3">
-          <span className="grid size-9 place-items-center rounded-lg bg-[#d52b1e] text-sm font-bold text-white">{siteConfig.shortName}</span>
+          <img
+            src={`${publicBasePath}/images/brand/umzughilfe-logo.png`}
+            alt=""
+            className="size-11 shrink-0 object-contain"
+            aria-hidden="true"
+          />
           <span className="hidden leading-tight sm:block"><strong className="block text-sm">{siteConfig.name}</strong><span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{siteConfig.region}</span></span>
         </Link>
         <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">

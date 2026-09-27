@@ -3,4 +3,5 @@ export type ServiceId = "moving" | "delivery" | "assembly" | "cleaning" | "elect
 export type ServiceDefinition = {
   id: ServiceId;
   icon: "truck" | "package" | "tool" | "sparkles" | "lightbulb";
+  image: string;
 };

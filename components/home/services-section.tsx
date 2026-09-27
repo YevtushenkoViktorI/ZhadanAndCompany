@@ -3,6 +3,7 @@ import { Box, Hammer, Lightbulb, Sparkles, Truck } from "lucide-react";
 import { Container } from "@/components/shared/container";
 import { Section } from "@/components/shared/section";
 import { services } from "@/content/services";
+import { publicBasePath } from "@/config/site";
 import type { Dictionary } from "@/i18n/dictionaries";
 import type { Locale } from "@/i18n/config";
 import { getElectricalCopy } from "@/i18n/electrical-copy";
@@ -23,11 +24,28 @@ export function ServicesSection({ locale, dictionary }: { locale: Locale; dictio
             const Icon = icons[service.icon];
             const content = service.id === "electrical" ? electrical : dictionary.services.items[service.id];
             return (
-              <article key={service.id} className="flex min-h-80 flex-col rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition-transform duration-300 hover:-translate-y-1">
-                <span className="grid size-12 place-items-center rounded-xl bg-[#f2f2f0] text-[#1d1d1f]"><Icon className="size-5" aria-hidden="true" /></span>
-                <h3 className="mt-8 text-xl font-bold">{content.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#68686d]">{content.description}</p>
-                <a href="#order" className="mt-auto pt-8 text-sm font-bold text-[#d52b1e]">{dictionary.hero.primaryAction} →</a>
+              <article
+                key={service.id}
+                className="group flex min-h-[30rem] flex-col overflow-hidden rounded-2xl border border-black/10 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-[#d52b1e]/35 hover:shadow-xl"
+              >
+                <div className="relative aspect-[4/3] overflow-hidden bg-[#e8e7e3]">
+                  <img
+                    src={`${publicBasePath}${service.image}`}
+                    alt={content.title}
+                    className="size-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <span className="absolute start-4 top-4 grid size-12 place-items-center rounded-xl bg-white/95 text-[#1d1d1f] shadow-sm backdrop-blur-sm">
+                    <Icon className="size-5" aria-hidden="true" />
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col p-6">
+                  <h3 className="text-xl font-bold">{content.title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[#68686d]">{content.description}</p>
+                  <a href="#order" className="mt-auto pt-8 text-sm font-bold text-[#d52b1e]">
+                    {dictionary.hero.primaryAction} →
+                  </a>
+                </div>
               </article>
             );
           })}

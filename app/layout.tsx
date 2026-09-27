@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { publicBasePath } from "@/config/site";
+import { publicBasePath, siteConfig } from "@/config/site";
 import "./globals.css";
 
 const manrope = localFont({
@@ -26,8 +26,8 @@ const notoSansArabic = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: "Послуги переїзду та прибирання в Берні",
-    template: "%s — Берн",
+    default: `${siteConfig.name} — послуги переїзду та допомоги вдома`,
+    template: `%s — ${siteConfig.name}`,
   },
   description: "Переїзди, доставка, складання меблів і прибирання в кантоні Берн.",
   icons: {

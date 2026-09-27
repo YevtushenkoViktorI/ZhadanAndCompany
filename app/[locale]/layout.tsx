@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
+import { siteConfig } from "@/config/site";
 import { getDirection, isLocale, locales } from "@/i18n/config";
 import { getDictionary } from "@/i18n/dictionaries";
 
@@ -12,5 +13,5 @@ export default async function LocaleLayout({ children, params }: Readonly<{ chil
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dictionary = await getDictionary(locale);
-  return <div lang={locale} dir={getDirection(locale)} className="min-h-screen"><SiteHeader locale={locale} dictionary={dictionary} /><main>{children}</main><SiteFooter title={dictionary.footer} location={dictionary.location} /></div>;
+  return <div lang={locale} dir={getDirection(locale)} className="min-h-screen"><SiteHeader locale={locale} dictionary={dictionary} /><main>{children}</main><SiteFooter title={siteConfig.name} location={dictionary.location} /></div>;
 }

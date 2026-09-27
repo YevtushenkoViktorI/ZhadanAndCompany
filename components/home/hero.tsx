@@ -12,7 +12,7 @@ export function Hero({ locale, content }: { locale: Locale; content: Dictionary[
     <section className="relative overflow-hidden bg-[#fafaf8] py-16 text-[#1d1d1f] sm:py-24 lg:py-32">
       <Container className="relative">
         <div className="max-w-5xl">
-          <h1 className="max-w-3xl text-balance text-[clamp(1.75rem,2.4vw,2.55rem)] font-bold leading-[1.1] tracking-[-0.035em]">{content.title}</h1>
+          <h1 className="max-w-3xl text-balance text-[clamp(2.1rem,2.88vw,3.06rem)] font-bold leading-[1.08] tracking-[-0.035em]">{content.title}</h1>
           <p className="mt-7 max-w-2xl text-base leading-7 text-[#68686d] sm:text-lg sm:leading-8">{description}</p>
           <div className="flex flex-wrap gap-3">
             <Button asChild size="lg" className="mt-8 rounded-full bg-[#d52b1e] px-7 hover:bg-[#b62318]"><a href="#order">{content.primaryAction}</a></Button>

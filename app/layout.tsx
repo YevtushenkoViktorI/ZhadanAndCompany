@@ -26,10 +26,10 @@ const notoSansArabic = localFont({
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} — послуги переїзду та допомоги вдома`,
+    default: `${siteConfig.name} — переїзди у Швейцарії та за кордон`,
     template: `%s — ${siteConfig.name}`,
   },
-  description: "Переїзди, доставка, складання меблів і прибирання в кантоні Берн.",
+  description: "Переїзди у Швейцарії та за кордон, доставка, складання меблів, прибирання й побутова допомога.",
   icons: {
     icon: `${publicBasePath}/favicon.svg`,
     shortcut: `${publicBasePath}/favicon.svg`,

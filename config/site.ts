@@ -1,7 +1,7 @@
 export const siteConfig = {
   name: "Umzughilfe",
   shortName: "U",
-  region: "Bern · Switzerland",
+  region: "Switzerland",
   whatsappUrl: "https://wa.me/41000000000",
   phone: "+41 79 000 00 00",
   phoneUrl: "tel:+41790000000",

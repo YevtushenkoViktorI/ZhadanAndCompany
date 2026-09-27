@@ -5,9 +5,11 @@ import { publicBasePath } from "@/config/site";
 import type { Dictionary } from "@/i18n/dictionaries";
 import type { Locale } from "@/i18n/config";
 import { getElectricalCopy } from "@/i18n/electrical-copy";
+import { getMovingCopy } from "@/i18n/moving-copy";
 
 export function ServicesSection({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
   const electrical = getElectricalCopy(locale);
+  const moving = getMovingCopy(locale);
   return (
     <Section id="services" className="bg-[#f5f4f1] text-[#1d1d1f]">
       <Container>
@@ -17,7 +19,11 @@ export function ServicesSection({ locale, dictionary }: { locale: Locale; dictio
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           {services.map((service) => {
-            const content = service.id === "electrical" ? electrical : dictionary.services.items[service.id];
+            const content = service.id === "electrical"
+              ? electrical
+              : service.id === "moving"
+                ? moving
+                : dictionary.services.items[service.id];
             return (
               <article
                 key={service.id}

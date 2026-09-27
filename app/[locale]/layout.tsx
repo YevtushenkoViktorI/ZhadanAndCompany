@@ -13,5 +13,5 @@ export default async function LocaleLayout({ children, params }: Readonly<{ chil
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const dictionary = await getDictionary(locale);
-  return <div lang={locale} dir={getDirection(locale)} className="min-h-screen"><SiteHeader locale={locale} dictionary={dictionary} /><main>{children}</main><SiteFooter title={siteConfig.name} location={dictionary.location} /></div>;
+  return <div lang={locale} dir={getDirection(locale)} className="min-h-screen"><SiteHeader locale={locale} dictionary={dictionary} /><main>{children}</main><SiteFooter title={siteConfig.name} location={siteConfig.region} /></div>;
 }

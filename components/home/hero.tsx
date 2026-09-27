@@ -9,7 +9,7 @@ import { getHeroDescription } from "@/i18n/hero-copy";
 export function Hero({ locale, content }: { locale: Locale; content: Dictionary["hero"] }) {
   const description = getHeroDescription(locale);
   return (
-    <section className="relative overflow-hidden bg-[#fafaf8] py-16 text-[#1d1d1f] sm:py-24 lg:py-32">
+    <section className="relative overflow-hidden bg-[#fafaf8] py-5 text-[#1d1d1f] sm:py-8 lg:py-10">
       <Container className="relative">
         <div className="max-w-5xl">
           <h1 className="max-w-3xl text-balance text-[clamp(2.1rem,2.88vw,3.06rem)] font-bold leading-[1.08] tracking-[-0.035em]">{content.title}</h1>

@@ -19,7 +19,7 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
   }
 
   return (
-    <label className="relative inline-flex w-44 items-center justify-between rounded-lg border border-black/10 bg-card px-3 py-2 text-sm font-bold text-foreground shadow-sm transition-all duration-200 hover:border-black/25 hover:shadow-md has-[:focus-visible]:border-black/30 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-black/15 has-[:focus-visible]:outline-offset-2">
+    <label className="relative inline-flex items-center gap-1.5 rounded-lg border border-black/10 bg-card px-3 py-2 text-sm font-bold text-foreground shadow-sm transition-all duration-200 hover:border-black/25 hover:shadow-md has-[:focus-visible]:border-black/30 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-black/15 has-[:focus-visible]:outline-offset-2">
       <span className="sr-only">{label}</span>
       <span aria-hidden="true">{localeLabels[locale]}</span>
       <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />

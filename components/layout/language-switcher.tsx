@@ -3,11 +3,11 @@
 import { usePathname, useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
 import { localeLabels, locales, type Locale } from "@/i18n/config";
-import { cn } from "@/lib/utils";
 
 export function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) {
   const pathname = usePathname();
   const router = useRouter();
+  const selectorWidth = Math.min(12, Math.max(7.5, localeLabels[locale].length * 0.52 + 3.4));
 
   function localizedPath(nextLocale: Locale) {
     const segments = pathname.split("/");
@@ -25,7 +25,8 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
       <select
         value={locale}
         onChange={(event) => router.push(localizedPath(event.target.value as Locale))}
-        className={cn("w-40 cursor-pointer appearance-none rounded-lg border border-black/10 bg-card py-2 ps-3 pe-11 text-sm font-bold text-foreground shadow-sm transition-all duration-200 hover:border-black/25 hover:shadow-md focus-visible:border-black/30 focus-visible:!outline-2 focus-visible:!outline-black/15 focus-visible:!outline-offset-2 focus-visible:ring-0")}
+        className="cursor-pointer appearance-none rounded-lg border border-black/10 bg-card py-2 ps-3 pe-11 text-sm font-bold text-foreground shadow-sm transition-all duration-200 hover:border-black/25 hover:shadow-md focus-visible:border-black/30 focus-visible:!outline-2 focus-visible:!outline-black/15 focus-visible:!outline-offset-2 focus-visible:ring-0"
+        style={{ width: `${selectorWidth}rem` }}
         aria-label={label}
       >
         {locales.map((item) => <option key={item} value={item} lang={item}>{localeLabels[item]}</option>)}

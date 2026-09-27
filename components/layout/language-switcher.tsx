@@ -7,7 +7,6 @@ import { localeLabels, locales, type Locale } from "@/i18n/config";
 export function LanguageSwitcher({ locale, label }: { locale: Locale; label: string }) {
   const pathname = usePathname();
   const router = useRouter();
-  const selectorWidth = Math.min(12, Math.max(7.5, localeLabels[locale].length * 0.52 + 3.4));
 
   function localizedPath(nextLocale: Locale) {
     const segments = pathname.split("/");
@@ -20,18 +19,18 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
   }
 
   return (
-    <label className="relative inline-flex">
+    <label className="relative inline-flex items-center gap-2 rounded-lg border border-black/10 bg-card px-3 py-2 text-sm font-bold text-foreground shadow-sm transition-all duration-200 hover:border-black/25 hover:shadow-md has-[:focus-visible]:border-black/30 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-black/15 has-[:focus-visible]:outline-offset-2">
       <span className="sr-only">{label}</span>
+      <span aria-hidden="true">{localeLabels[locale]}</span>
+      <ChevronDown className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
       <select
         value={locale}
         onChange={(event) => router.push(localizedPath(event.target.value as Locale))}
-        className="cursor-pointer appearance-none rounded-lg border border-black/10 bg-card py-2 ps-3 pe-11 text-sm font-bold text-foreground shadow-sm transition-all duration-200 hover:border-black/25 hover:shadow-md focus-visible:border-black/30 focus-visible:!outline-2 focus-visible:!outline-black/15 focus-visible:!outline-offset-2 focus-visible:ring-0"
-        style={{ width: `${selectorWidth}rem` }}
+        className="absolute inset-0 size-full cursor-pointer appearance-none opacity-0 focus-visible:!outline-none"
         aria-label={label}
       >
         {locales.map((item) => <option key={item} value={item} lang={item}>{localeLabels[item]}</option>)}
       </select>
-      <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
     </label>
   );
 }

@@ -30,7 +30,7 @@ export function LanguageSwitcher({ locale, label }: { locale: Locale; label: str
       >
         {locales.map((item) => <option key={item} value={item} lang={item}>{localeLabels[item]}</option>)}
       </select>
-      <ChevronDown className="pointer-events-none absolute end-5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+      <ChevronDown className="pointer-events-none absolute end-3 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
     </label>
   );
 }

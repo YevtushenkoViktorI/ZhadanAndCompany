@@ -5,10 +5,10 @@ import { cn } from "@/lib/utils";
 
 const softEdgeMask: CSSProperties = {
   WebkitMaskImage:
-    "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 4%, black 96%, transparent 100%)",
+    "linear-gradient(to right, transparent 0%, black 0.8%, black 99.2%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 0.8%, black 99.2%, transparent 100%)",
   WebkitMaskComposite: "source-in",
   maskImage:
-    "linear-gradient(to right, transparent 0%, black 4%, black 96%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 4%, black 96%, transparent 100%)",
+    "linear-gradient(to right, transparent 0%, black 0.8%, black 99.2%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 0.8%, black 99.2%, transparent 100%)",
   maskComposite: "intersect",
 };
 

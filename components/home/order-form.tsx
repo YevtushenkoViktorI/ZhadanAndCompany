@@ -18,7 +18,8 @@ import { getElectricalCopy } from "@/i18n/electrical-copy";
 import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
-const formEndpoint = "https://formsubmit.co/ajax/umzughilfe.schweiz@gmail.com";
+const formEndpoint = "https://formsubmit.co/umzughilfe.schweiz@gmail.com";
+const formTarget = "formsubmit-response";
 
 const errorCopy: Partial<Record<Locale, { send: string; activation: string; files: string; sending: string }>> = {
   uk: {
@@ -44,6 +45,10 @@ const errorCopy: Partial<Record<Locale, { send: string; activation: string; file
 export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
   const formCardRef = useRef<HTMLDivElement>(null);
   const successTitleRef = useRef<HTMLHeadingElement>(null);
+  const pendingSubmissionRef = useRef(false);
+  const subjectRef = useRef<HTMLInputElement>(null);
+  const summaryRef = useRef<HTMLInputElement>(null);
+  const sourceUrlRef = useRef<HTMLInputElement>(null);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -79,7 +84,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     };
   }, [submitted]);
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     if (!consent || !form.reportValidity() || submitting) return;
@@ -104,40 +109,38 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     const customerPhone = String(formData.get("phone") ?? "").trim();
     const requestedDate = String(formData.get("date") ?? "").trim();
 
-    formData.set("_subject", [`Заявка #${requestId}`, serviceTitle, customerName, customerPhone, requestedDate].filter(Boolean).join(" · "));
-    formData.set("Короткий опис", `${serviceTitle}; ${customerName}; ${customerPhone}; ${requestedDate}`);
-    formData.set("_template", "table");
-    formData.set("_captcha", "false");
-    formData.set("_url", window.location.href);
+    if (subjectRef.current) {
+      subjectRef.current.value = [`Заявка #${requestId}`, serviceTitle, customerName, customerPhone, requestedDate].filter(Boolean).join(" · ");
+    }
+    if (summaryRef.current) {
+      summaryRef.current.value = `${serviceTitle}; ${customerName}; ${customerPhone}; ${requestedDate}`;
+    }
+    if (sourceUrlRef.current) sourceUrlRef.current.value = window.location.href;
 
     setSubmitting(true);
     setSubmitError("");
+    pendingSubmissionRef.current = true;
+    form.submit();
+  }
 
-    try {
-      const response = await fetch(formEndpoint, {
-        method: "POST",
-        body: formData,
-        headers: { Accept: "application/json" },
-      });
-      const result = await response.json().catch(() => null) as { success?: boolean | string; message?: string } | null;
-      if (!response.ok) throw new Error("Submission failed");
-      if (result?.success !== true && result?.success !== "true") {
-        setSubmitError(result?.message?.toLowerCase().includes("activation") ? status.activation : status.send);
-        return;
-      }
-      setSubmitted(true);
-      form.reset();
-      setConsent(false);
-    } catch {
-      setSubmitError(status.send);
-    } finally {
-      setSubmitting(false);
-    }
+  function completeSubmission() {
+    if (!pendingSubmissionRef.current) return;
+    pendingSubmissionRef.current = false;
+    setSubmitting(false);
+    setSubmitted(true);
+    setConsent(false);
+    document.querySelector<HTMLFormElement>(`form[target="${formTarget}"]`)?.reset();
   }
 
   return (
     <section id="order" className="scroll-mt-20 bg-[#f5f4f1] py-16 text-[#1d1d1f] sm:py-24">
       <Container className="max-w-5xl">
+        <iframe
+          name={formTarget}
+          title="Form submission response"
+          className="hidden"
+          onLoad={completeSubmission}
+        />
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d52b1e]">{dictionary.hero.eyebrow}</p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">{dictionary.order.title}</h2>
@@ -161,6 +164,9 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
             <div className="min-h-0 overflow-hidden">
               <form
               onSubmit={submit}
+              action={formEndpoint}
+              method="POST"
+              target={formTarget}
               noValidate={false}
               encType="multipart/form-data"
               inert={submitted}
@@ -168,6 +174,11 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               className={`transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${submitted ? "pointer-events-none scale-[0.985] opacity-0 blur-[2px]" : "scale-100 opacity-100 blur-0"}`}
             >
               <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+              <input ref={subjectRef} type="hidden" name="_subject" />
+              <input ref={summaryRef} type="hidden" name="Короткий опис" />
+              <input ref={sourceUrlRef} type="hidden" name="_url" />
+              <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>
                 {services.map(({ id }) => (
                   <button key={id} type="button" onClick={() => setService(id)} aria-pressed={service === id}

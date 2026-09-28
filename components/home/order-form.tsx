@@ -81,7 +81,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
   const photoText = photoCopy[locale] ?? photoCopy.en!;
-  const successUrl = `https://yevtushenkoviktori.github.io/ZhadanAndCompany/${locale}/submitted.html`;
 
   useEffect(() => {
     function selectService(event: Event) {
@@ -117,10 +116,10 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     };
   }, [submitted]);
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     const form = event.currentTarget;
     if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) {
-      event.preventDefault();
       return;
     }
 
@@ -130,7 +129,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     const status = errorCopy[locale] ?? errorCopy.en!;
 
     if (totalPhotoSize > maxPhotoBytes) {
-      event.preventDefault();
       setSubmitError(status.files);
       setPhotoLimitExceeded(true);
       return;
@@ -156,6 +154,23 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
     setSubmitting(true);
     setSubmitError("");
+
+    try {
+      const response = await fetch(formEndpoint, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "text/html" },
+      });
+      const responseText = await response.text();
+      const accepted = response.ok && /submitted successfully|thanks!/i.test(responseText);
+
+      if (!accepted) throw new Error("FormSubmit did not accept the request");
+      setSubmitted(true);
+    } catch {
+      setSubmitError(status.send);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function preparePhotos(event: React.ChangeEvent<HTMLInputElement>) {
@@ -236,8 +251,8 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <input ref={subjectRef} type="hidden" name="_subject" />
               <input ref={summaryRef} type="hidden" name="Короткий опис" />
               <input ref={sourceUrlRef} type="hidden" name="_url" />
-              <input type="hidden" name="_next" value={successUrl} />
               <input type="hidden" name="_template" value="table" />
+              <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>
                 {services.map(({ id }) => (
                   <button key={id} type="button" onClick={() => setService(id)} aria-pressed={service === id}

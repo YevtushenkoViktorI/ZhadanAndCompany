@@ -19,7 +19,6 @@ import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
 const formEndpoint = "https://formsubmit.co/umzughilfe.schweiz@gmail.com";
-const formTarget = "order-form-submit-target";
 const maxPhotoBytes = 10 * 1024 * 1024;
 const maxPhotoDimension = 1920;
 
@@ -69,8 +68,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const summaryRef = useRef<HTMLInputElement>(null);
   const sourceUrlRef = useRef<HTMLInputElement>(null);
   const photoSelectionRef = useRef(0);
-  const submissionStartedRef = useRef(false);
-  const submissionTimeoutRef = useRef<number | null>(null);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -84,6 +81,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
   const photoText = photoCopy[locale] ?? photoCopy.en!;
+  const successUrl = `https://yevtushenkoviktori.github.io/ZhadanAndCompany/${locale}/submitted.html`;
 
   useEffect(() => {
     function selectService(event: Event) {
@@ -119,19 +117,12 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     };
   }, [submitted]);
 
-  function finishSubmission() {
-    if (!submissionStartedRef.current) return;
-    submissionStartedRef.current = false;
-    if (submissionTimeoutRef.current !== null) window.clearTimeout(submissionTimeoutRef.current);
-    submissionTimeoutRef.current = null;
-    setSubmitting(false);
-    setSubmitted(true);
-  }
-
   function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
     const form = event.currentTarget;
-    if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) return;
+    if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) {
+      event.preventDefault();
+      return;
+    }
 
     const formData = new FormData(form);
     const photos = formData.getAll("attachment").filter((value): value is File => value instanceof File && value.size > 0);
@@ -139,6 +130,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     const status = errorCopy[locale] ?? errorCopy.en!;
 
     if (totalPhotoSize > maxPhotoBytes) {
+      event.preventDefault();
       setSubmitError(status.files);
       setPhotoLimitExceeded(true);
       return;
@@ -164,14 +156,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
     setSubmitting(true);
     setSubmitError("");
-    submissionStartedRef.current = true;
-    submissionTimeoutRef.current = window.setTimeout(() => {
-      submissionStartedRef.current = false;
-      submissionTimeoutRef.current = null;
-      setSubmitting(false);
-      setSubmitError(status.send);
-    }, 30000);
-    form.submit();
   }
 
   async function preparePhotos(event: React.ChangeEvent<HTMLInputElement>) {
@@ -242,7 +226,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               onSubmit={submit}
               action={formEndpoint}
               method="POST"
-              target={formTarget}
               noValidate={false}
               encType="multipart/form-data"
               inert={submitted}
@@ -253,6 +236,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <input ref={subjectRef} type="hidden" name="_subject" />
               <input ref={summaryRef} type="hidden" name="Короткий опис" />
               <input ref={sourceUrlRef} type="hidden" name="_url" />
+              <input type="hidden" name="_next" value={successUrl} />
               <input type="hidden" name="_template" value="table" />
               <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>
@@ -315,14 +299,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                 {processingPhotos ? photoText.processing : submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
               </Button>
               </form>
-              <iframe
-                title=""
-                name={formTarget}
-                className="pointer-events-none absolute size-px border-0 opacity-0"
-                aria-hidden="true"
-                tabIndex={-1}
-                onLoad={finishSubmission}
-              />
             </div>
           </div>
         </div>

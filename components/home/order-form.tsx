@@ -318,8 +318,9 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <iframe
                 title=""
                 name={formTarget}
-                className="hidden"
+                className="pointer-events-none absolute size-px border-0 opacity-0"
                 aria-hidden="true"
+                tabIndex={-1}
                 onLoad={finishSubmission}
               />
             </div>

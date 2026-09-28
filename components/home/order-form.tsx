@@ -19,6 +19,7 @@ import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
 const formEndpoint = "https://formsubmit.co/umzughilfe.schweiz@gmail.com";
+const formAjaxEndpoint = "https://formsubmit.co/ajax/umzughilfe.schweiz@gmail.com";
 const maxPhotoBytes = 10 * 1024 * 1024;
 const maxPhotoDimension = 1920;
 
@@ -81,7 +82,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
   const photoText = photoCopy[locale] ?? photoCopy.en!;
-  const successUrl = `https://yevtushenkoviktori.github.io/ZhadanAndCompany/${locale}?submitted=1#order`;
 
   useEffect(() => {
     function selectService(event: Event) {
@@ -117,7 +117,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     };
   }, [submitted]);
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) return;
@@ -153,7 +153,23 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
     setSubmitting(true);
     setSubmitError("");
-    form.submit();
+
+    try {
+      const response = await fetch(formAjaxEndpoint, {
+        method: "POST",
+        body: new FormData(form),
+        headers: { Accept: "application/json" },
+      });
+      const result = await response.json().catch(() => null) as { success?: boolean | string } | null;
+      const accepted = result?.success === true || result?.success === "true";
+
+      if (!response.ok || !accepted) throw new Error("FormSubmit rejected the request");
+      setSubmitted(true);
+    } catch {
+      setSubmitError(status.send);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   async function preparePhotos(event: React.ChangeEvent<HTMLInputElement>) {
@@ -234,7 +250,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <input ref={subjectRef} type="hidden" name="_subject" />
               <input ref={summaryRef} type="hidden" name="Короткий опис" />
               <input ref={sourceUrlRef} type="hidden" name="_url" />
-              <input type="hidden" name="_next" value={successUrl} />
               <input type="hidden" name="_template" value="table" />
               <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>

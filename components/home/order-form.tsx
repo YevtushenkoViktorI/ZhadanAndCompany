@@ -133,7 +133,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
           <p className="mt-4 text-lg leading-relaxed text-[#68686d]">{dictionary.order.description}</p>
         </div>
 
-        <div ref={formCardRef} className="relative mt-10 scroll-mt-24 overflow-hidden rounded-3xl border border-black/10 bg-white p-5 shadow-sm sm:p-10">
+        <div ref={formCardRef} className="relative mt-10 min-h-[26rem] scroll-mt-24 overflow-hidden rounded-3xl border border-black/10 bg-white p-5 shadow-sm sm:p-10">
           <div
             className={`absolute inset-0 grid place-items-center p-5 text-center transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none sm:p-10 ${submitted ? "scale-100 opacity-100 blur-0" : "pointer-events-none scale-[0.98] opacity-0 blur-[2px]"}`}
             aria-hidden={!submitted}
@@ -146,7 +146,9 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               </div>
           </div>
 
-            <form
+          <div className={`grid transition-[grid-template-rows] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${submitted ? "grid-rows-[0fr]" : "grid-rows-[1fr]"}`}>
+            <div className="min-h-0 overflow-hidden">
+              <form
               onSubmit={submit}
               noValidate={false}
               encType="multipart/form-data"
@@ -206,7 +208,9 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <Button type="submit" size="lg" disabled={!consent || submitting} className="mt-7 rounded-full bg-[#d52b1e] px-8 hover:bg-[#b62318]">
                 {submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
               </Button>
-            </form>
+              </form>
+            </div>
+          </div>
         </div>
       </Container>
     </section>

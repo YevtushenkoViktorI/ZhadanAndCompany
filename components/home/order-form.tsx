@@ -115,7 +115,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) return;
 
     const formData = new FormData(form);
-    const photos = formData.getAll("photos").filter((value): value is File => value instanceof File && value.size > 0);
+    const photos = formData.getAll("attachment").filter((value): value is File => value instanceof File && value.size > 0);
     const totalPhotoSize = photos.reduce((total, photo) => total + photo.size, 0);
     const status = errorCopy[locale] ?? errorCopy.en!;
 
@@ -285,7 +285,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                   </RadioGroup>
                 </Field>
                 <Field label={copy.photos} className="sm:col-span-2">
-                  <Input name="photos" type="file" accept="image/*" multiple onChange={preparePhotos} disabled={processingPhotos} className="h-12 rounded-xl bg-[#fafaf8] file:me-3" />
+                  <Input name="attachment" type="file" accept="image/*" multiple onChange={preparePhotos} disabled={processingPhotos} className="h-12 rounded-xl bg-[#fafaf8] file:me-3" />
                   <p className="mt-2 text-sm text-[#68686d]">{photoText.hint}</p>
                   {photoStatus ? (
                     <p className={`mt-1 text-sm font-medium ${photoLimitExceeded ? "text-[#b62318]" : "text-emerald-700"}`} role={photoLimitExceeded ? "alert" : "status"}>

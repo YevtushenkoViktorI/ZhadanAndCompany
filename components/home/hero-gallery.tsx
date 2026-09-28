@@ -30,18 +30,22 @@ const slides = [
   { type: "single", src: "/images/hero/truck-profile.webp", position: "center" },
 ] as const;
 
-function SoftEdgePhoto({ src, className, position = "center", eager = false }: {
+function SoftEdgePhoto({ src, className, position = "center", eager = false, active = false }: {
   src: string;
   className: string;
   position?: string;
   eager?: boolean;
+  active?: boolean;
 }) {
   return (
     <div className={cn("absolute overflow-hidden rounded-lg", className)} style={softEdgeMask}>
       <img
         src={`${publicBasePath}${src}`}
         alt=""
-        className="size-full object-cover"
+        className={cn(
+          "size-full object-cover transition-transform duration-[6500ms] ease-out motion-reduce:transition-none",
+          active ? "scale-[1.035]" : "scale-100",
+        )}
         style={{ objectPosition: position }}
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
@@ -55,7 +59,7 @@ export function HeroGallery() {
   const [paused, setPaused] = useState(false);
 
   useEffect(() => {
-    if (paused) return;
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slides.length);
     }, 6500);
@@ -76,8 +80,10 @@ export function HeroGallery() {
         <div
           key={slide.type === "single" ? slide.src : "portrait-collection"}
           className={cn(
-            "absolute inset-0 transition-opacity duration-700 ease-out",
-            activeSlide === index ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0",
+            "absolute inset-0 transition-[opacity,transform,filter] duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
+            activeSlide === index
+              ? "z-10 scale-100 opacity-100 blur-0"
+              : "pointer-events-none z-0 scale-[0.985] opacity-0 blur-[1.5px]",
           )}
           aria-hidden={activeSlide !== index}
         >
@@ -87,12 +93,13 @@ export function HeroGallery() {
               position={slide.position}
               className="inset-0"
               eager={index === 0}
+              active={activeSlide === index}
             />
           ) : (
             <>
-              <SoftEdgePhoto src={portraitPhotos[0]} className="inset-y-0 start-0 z-0 w-[68%]" />
-              <SoftEdgePhoto src={portraitPhotos[1]} className="end-0 top-0 z-10 h-[56%] w-[48%]" />
-              <SoftEdgePhoto src={portraitPhotos[2]} className="bottom-0 end-0 z-20 h-[54%] w-[48%]" />
+              <SoftEdgePhoto src={portraitPhotos[0]} className="inset-y-0 start-0 z-0 w-[68%]" active={activeSlide === index} />
+              <SoftEdgePhoto src={portraitPhotos[1]} className="end-0 top-0 z-10 h-[56%] w-[48%]" active={activeSlide === index} />
+              <SoftEdgePhoto src={portraitPhotos[2]} className="bottom-0 end-0 z-20 h-[54%] w-[48%]" active={activeSlide === index} />
             </>
           )}
         </div>
@@ -104,7 +111,7 @@ export function HeroGallery() {
             key={slide.type === "single" ? slide.src : "collection-dot"}
             type="button"
             className={cn(
-              "size-2 rounded-full transition-all duration-300",
+              "size-2 rounded-full transition-all duration-500 ease-out motion-reduce:transition-none",
               activeSlide === index ? "w-5 bg-[#d52b1e]" : "bg-black/25 hover:bg-black/45",
             )}
             aria-label={`Show photo ${index + 1}`}
@@ -117,7 +124,7 @@ export function HeroGallery() {
       <div className="absolute bottom-3 end-3 z-30 flex gap-2">
         <button
           type="button"
-          className="grid size-10 place-items-center rounded-full bg-white/90 text-[#1d1d1f] shadow-sm backdrop-blur-sm transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d52b1e]"
+          className="grid size-10 place-items-center rounded-full bg-white/90 text-[#1d1d1f] shadow-sm backdrop-blur-sm transition-transform duration-300 hover:scale-105 active:scale-95 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d52b1e]"
           aria-label="Previous photo"
           onClick={() => showSlide(activeSlide - 1)}
         >
@@ -125,7 +132,7 @@ export function HeroGallery() {
         </button>
         <button
           type="button"
-          className="grid size-10 place-items-center rounded-full bg-white/90 text-[#1d1d1f] shadow-sm backdrop-blur-sm transition-transform hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d52b1e]"
+          className="grid size-10 place-items-center rounded-full bg-white/90 text-[#1d1d1f] shadow-sm backdrop-blur-sm transition-transform duration-300 hover:scale-105 active:scale-95 motion-reduce:transition-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d52b1e]"
           aria-label="Next photo"
           onClick={() => showSlide(activeSlide + 1)}
         >

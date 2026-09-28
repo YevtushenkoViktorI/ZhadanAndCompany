@@ -24,7 +24,7 @@ export function HeroGallery() {
       {photos.map((photo, index) => (
         <div
           key={photo.src}
-          className={cn("absolute overflow-hidden", photo.className)}
+          className={cn("absolute overflow-hidden rounded-lg", photo.className)}
           style={softEdgeMask}
         >
           <img

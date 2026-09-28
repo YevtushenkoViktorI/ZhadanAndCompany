@@ -38,12 +38,12 @@ function SoftEdgePhoto({ src, className, position = "center", eager = false, act
   active?: boolean;
 }) {
   return (
-    <div className={cn("absolute overflow-hidden rounded-lg", className)} style={softEdgeMask}>
+    <div className={cn("absolute overflow-hidden", className)} style={softEdgeMask}>
       <img
         src={`${publicBasePath}${src}`}
         alt=""
         className={cn(
-          "size-full object-cover transition-transform duration-[6500ms] ease-out motion-reduce:transition-none",
+          "size-full object-cover transition-transform duration-[7500ms] ease-out motion-reduce:transition-none",
           active ? "scale-[1.035]" : "scale-100",
         )}
         style={{ objectPosition: position }}
@@ -62,7 +62,7 @@ export function HeroGallery() {
     if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % slides.length);
-    }, 6500);
+    }, 7500);
     return () => window.clearInterval(timer);
   }, [paused]);
 
@@ -70,7 +70,7 @@ export function HeroGallery() {
 
   return (
     <div
-      className="relative min-h-80 w-full sm:min-h-[24rem] lg:min-h-[30rem]"
+      className="relative min-h-80 w-full overflow-hidden rounded-lg sm:min-h-[24rem] lg:min-h-[30rem]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       onFocus={() => setPaused(true)}
@@ -80,10 +80,8 @@ export function HeroGallery() {
         <div
           key={slide.type === "single" ? slide.src : "portrait-collection"}
           className={cn(
-            "absolute inset-0 transition-[opacity,transform,filter] duration-1000 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-            activeSlide === index
-              ? "z-10 scale-100 opacity-100 blur-0"
-              : "pointer-events-none z-0 scale-[0.985] opacity-0 blur-[1.5px]",
+            "absolute inset-0 transition-opacity duration-[1800ms] ease-in-out motion-reduce:transition-none",
+            activeSlide === index ? "z-10 opacity-100" : "pointer-events-none z-0 opacity-0",
           )}
           aria-hidden={activeSlide !== index}
         >

@@ -19,7 +19,7 @@ import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
 const formEndpoint = "https://formsubmit.co/umzughilfe.schweiz@gmail.com";
-const formAjaxEndpoint = "https://formsubmit.co/ajax/umzughilfe.schweiz@gmail.com";
+const formTarget = "order-form-submit-target";
 const maxPhotoBytes = 10 * 1024 * 1024;
 const maxPhotoDimension = 1920;
 
@@ -69,6 +69,8 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const summaryRef = useRef<HTMLInputElement>(null);
   const sourceUrlRef = useRef<HTMLInputElement>(null);
   const photoSelectionRef = useRef(0);
+  const submissionStartedRef = useRef(false);
+  const submissionTimeoutRef = useRef<number | null>(null);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -117,7 +119,16 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     };
   }, [submitted]);
 
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
+  function finishSubmission() {
+    if (!submissionStartedRef.current) return;
+    submissionStartedRef.current = false;
+    if (submissionTimeoutRef.current !== null) window.clearTimeout(submissionTimeoutRef.current);
+    submissionTimeoutRef.current = null;
+    setSubmitting(false);
+    setSubmitted(true);
+  }
+
+  function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
     if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) return;
@@ -153,23 +164,14 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
     setSubmitting(true);
     setSubmitError("");
-
-    try {
-      const response = await fetch(formAjaxEndpoint, {
-        method: "POST",
-        body: new FormData(form),
-        headers: { Accept: "application/json" },
-      });
-      const result = await response.json().catch(() => null) as { success?: boolean | string } | null;
-      const accepted = result?.success === true || result?.success === "true";
-
-      if (!response.ok || !accepted) throw new Error("FormSubmit rejected the request");
-      setSubmitted(true);
-    } catch {
-      setSubmitError(status.send);
-    } finally {
+    submissionStartedRef.current = true;
+    submissionTimeoutRef.current = window.setTimeout(() => {
+      submissionStartedRef.current = false;
+      submissionTimeoutRef.current = null;
       setSubmitting(false);
-    }
+      setSubmitError(status.send);
+    }, 30000);
+    form.submit();
   }
 
   async function preparePhotos(event: React.ChangeEvent<HTMLInputElement>) {
@@ -240,6 +242,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               onSubmit={submit}
               action={formEndpoint}
               method="POST"
+              target={formTarget}
               noValidate={false}
               encType="multipart/form-data"
               inert={submitted}
@@ -312,6 +315,13 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                 {processingPhotos ? photoText.processing : submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
               </Button>
               </form>
+              <iframe
+                title=""
+                name={formTarget}
+                className="hidden"
+                aria-hidden="true"
+                onLoad={finishSubmission}
+              />
             </div>
           </div>
         </div>

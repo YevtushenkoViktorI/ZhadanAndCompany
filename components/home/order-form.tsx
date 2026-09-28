@@ -238,7 +238,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <input ref={sourceUrlRef} type="hidden" name="_url" />
               <input type="hidden" name="_next" value={successUrl} />
               <input type="hidden" name="_template" value="table" />
-              <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>
                 {services.map(({ id }) => (
                   <button key={id} type="button" onClick={() => setService(id)} aria-pressed={service === id}

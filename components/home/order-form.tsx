@@ -94,7 +94,18 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
       return;
     }
 
-    formData.set("_subject", `New ${service} request — Umzughilfe`);
+    const requestId = Date.now().toString(36).slice(-6).toUpperCase();
+    const serviceTitle = service === "combo"
+      ? copy.combo
+      : service === "electrical"
+        ? electrical.title
+        : dictionary.services.items[service].title;
+    const customerName = String(formData.get("name") ?? "").trim();
+    const customerPhone = String(formData.get("phone") ?? "").trim();
+    const requestedDate = String(formData.get("date") ?? "").trim();
+
+    formData.set("_subject", [`Заявка #${requestId}`, serviceTitle, customerName, customerPhone, requestedDate].filter(Boolean).join(" · "));
+    formData.set("Короткий опис", `${serviceTitle}; ${customerName}; ${customerPhone}; ${requestedDate}`);
     formData.set("_template", "table");
     formData.set("_captcha", "false");
     formData.set("_url", window.location.href);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 
 import { Container } from "@/components/shared/container";
@@ -27,6 +27,18 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const fields = getOrderFieldCopy(locale);
   const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
+
+  useEffect(() => {
+    function selectService(event: Event) {
+      const selectedService = (event as CustomEvent<unknown>).detail;
+      if (services.some(({ id }) => id === selectedService)) {
+        setService(selectedService as ServiceId);
+      }
+    }
+
+    window.addEventListener("select-order-service", selectService);
+    return () => window.removeEventListener("select-order-service", selectService);
+  }, []);
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

@@ -1,3 +1,5 @@
+"use client";
+
 import { Container } from "@/components/shared/container";
 import { Section } from "@/components/shared/section";
 import { services } from "@/content/services";
@@ -40,7 +42,11 @@ export function ServicesSection({ locale, dictionary }: { locale: Locale; dictio
                 <div className="flex flex-1 flex-col p-6">
                   <h3 className="text-xl font-bold">{content.title}</h3>
                   <p className="mt-3 text-sm leading-relaxed text-[#68686d]">{content.description}</p>
-                  <a href="#order" className="mt-auto inline-block pt-5 text-sm font-bold text-[#d52b1e]">
+                  <a
+                    href="#order"
+                    onClick={() => window.dispatchEvent(new CustomEvent("select-order-service", { detail: service.id }))}
+                    className="mt-auto inline-block pt-5 text-sm font-bold text-[#d52b1e]"
+                  >
                     {dictionary.hero.primaryAction} →
                   </a>
                 </div>

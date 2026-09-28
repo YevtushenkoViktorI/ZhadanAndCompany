@@ -67,7 +67,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const subjectRef = useRef<HTMLInputElement>(null);
   const summaryRef = useRef<HTMLInputElement>(null);
   const sourceUrlRef = useRef<HTMLInputElement>(null);
-  const nextUrlRef = useRef<HTMLInputElement>(null);
   const photoSelectionRef = useRef(0);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
@@ -82,6 +81,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
   const photoText = photoCopy[locale] ?? photoCopy.en!;
+  const successUrl = `https://yevtushenkoviktori.github.io/ZhadanAndCompany/${locale}?submitted=1#order`;
 
   useEffect(() => {
     function selectService(event: Event) {
@@ -150,9 +150,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
       summaryRef.current.value = `${serviceTitle}; ${customerName}; ${customerPhone}; ${requestedDate}`;
     }
     if (sourceUrlRef.current) sourceUrlRef.current.value = window.location.href;
-    if (nextUrlRef.current) {
-      nextUrlRef.current.value = `${window.location.origin}${window.location.pathname}?submitted=1#order`;
-    }
 
     setSubmitting(true);
     setSubmitError("");
@@ -237,7 +234,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <input ref={subjectRef} type="hidden" name="_subject" />
               <input ref={summaryRef} type="hidden" name="Короткий опис" />
               <input ref={sourceUrlRef} type="hidden" name="_url" />
-              <input ref={nextUrlRef} type="hidden" name="_next" />
+              <input type="hidden" name="_next" value={successUrl} />
               <input type="hidden" name="_template" value="table" />
               <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 
 import { Container } from "@/components/shared/container";
@@ -39,6 +39,8 @@ const errorCopy: Partial<Record<Locale, { send: string; files: string; sending: 
 };
 
 export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
+  const formCardRef = useRef<HTMLDivElement>(null);
+  const successTitleRef = useRef<HTMLHeadingElement>(null);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -60,6 +62,19 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     window.addEventListener("select-order-service", selectService);
     return () => window.removeEventListener("select-order-service", selectService);
   }, []);
+
+  useEffect(() => {
+    if (!submitted) return;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const frame = window.requestAnimationFrame(() => {
+      formCardRef.current?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    });
+    const focusTimer = window.setTimeout(() => successTitleRef.current?.focus({ preventScroll: true }), reducedMotion ? 0 : 750);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(focusTimer);
+    };
+  }, [submitted]);
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -111,18 +126,27 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
           <p className="mt-4 text-lg leading-relaxed text-[#68686d]">{dictionary.order.description}</p>
         </div>
 
-        <div className="mt-10 rounded-3xl border border-black/10 bg-white p-5 shadow-sm sm:p-10">
-          {submitted ? (
-            <div className="grid min-h-96 place-items-center text-center">
+        <div ref={formCardRef} className="relative mt-10 scroll-mt-24 overflow-hidden rounded-3xl border border-black/10 bg-white p-5 shadow-sm sm:p-10">
+          <div
+            className={`absolute inset-0 grid place-items-center p-5 text-center transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none sm:p-10 ${submitted ? "scale-100 opacity-100 blur-0" : "pointer-events-none scale-[0.98] opacity-0 blur-[2px]"}`}
+            aria-hidden={!submitted}
+          >
               <div className="max-w-lg">
-                <CheckCircle2 className="mx-auto size-16 text-emerald-600" aria-hidden="true" />
-                <h3 className="mt-6 text-2xl font-bold">{copy.successTitle}</h3>
+                <CheckCircle2 className={`mx-auto size-16 text-emerald-600 transition-[transform,opacity] delay-200 duration-500 motion-reduce:transition-none ${submitted ? "scale-100 opacity-100" : "scale-75 opacity-0"}`} aria-hidden="true" />
+                <h3 ref={successTitleRef} tabIndex={-1} className="mt-6 text-2xl font-bold outline-none">{copy.successTitle}</h3>
                 <p className="mt-3 text-[#68686d]">{copy.successDescription}</p>
                 <Button className="mt-7 rounded-full" variant="outline" onClick={() => { setSubmitted(false); setConsent(false); }}>{copy.again}</Button>
               </div>
-            </div>
-          ) : (
-            <form onSubmit={submit} noValidate={false} encType="multipart/form-data">
+          </div>
+
+            <form
+              onSubmit={submit}
+              noValidate={false}
+              encType="multipart/form-data"
+              inert={submitted}
+              aria-hidden={submitted}
+              className={`transition-[opacity,transform,filter] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none ${submitted ? "pointer-events-none scale-[0.985] opacity-0 blur-[2px]" : "scale-100 opacity-100 blur-0"}`}
+            >
               <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>
                 {services.map(({ id }) => (
@@ -176,7 +200,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                 {submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
               </Button>
             </form>
-          )}
         </div>
       </Container>
     </section>

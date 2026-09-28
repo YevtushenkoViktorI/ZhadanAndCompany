@@ -20,19 +20,22 @@ import type { ServiceId } from "@/types/service";
 type OrderType = ServiceId | "combo";
 const formEndpoint = "https://formsubmit.co/ajax/umzughilfe.schweiz@gmail.com";
 
-const errorCopy: Partial<Record<Locale, { send: string; files: string; sending: string }>> = {
+const errorCopy: Partial<Record<Locale, { send: string; activation: string; files: string; sending: string }>> = {
   uk: {
     send: "Не вдалося надіслати запит. Перевірте з’єднання та спробуйте ще раз.",
+    activation: "Форма очікує активації власником. Будь ласка, спробуйте трохи пізніше.",
     files: "Загальний розмір фотографій не повинен перевищувати 10 МБ.",
     sending: "Надсилаємо…",
   },
   de: {
     send: "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    activation: "Das Formular wartet auf die Aktivierung durch den Inhaber. Bitte versuchen Sie es später erneut.",
     files: "Die Fotos dürfen zusammen höchstens 10 MB groß sein.",
     sending: "Wird gesendet…",
   },
   en: {
     send: "We could not send your request. Check your connection and try again.",
+    activation: "The form is awaiting activation by the owner. Please try again a little later.",
     files: "The total size of the photos must not exceed 10 MB.",
     sending: "Sending…",
   },
@@ -105,8 +108,12 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
         body: formData,
         headers: { Accept: "application/json" },
       });
-      const result = await response.json().catch(() => null) as { success?: boolean | string } | null;
-      if (!response.ok || (result?.success !== true && result?.success !== "true")) throw new Error("Submission failed");
+      const result = await response.json().catch(() => null) as { success?: boolean | string; message?: string } | null;
+      if (!response.ok) throw new Error("Submission failed");
+      if (result?.success !== true && result?.success !== "true") {
+        setSubmitError(result?.message?.toLowerCase().includes("activation") ? status.activation : status.send);
+        return;
+      }
       setSubmitted(true);
       form.reset();
       setConsent(false);

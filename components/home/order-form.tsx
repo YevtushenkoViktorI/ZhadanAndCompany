@@ -18,11 +18,32 @@ import { getElectricalCopy } from "@/i18n/electrical-copy";
 import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
+const formEndpoint = "https://formsubmit.co/ajax/umzughilfe.schweiz@gmail.com";
+
+const errorCopy: Partial<Record<Locale, { send: string; files: string; sending: string }>> = {
+  uk: {
+    send: "Не вдалося надіслати запит. Перевірте з’єднання та спробуйте ще раз.",
+    files: "Загальний розмір фотографій не повинен перевищувати 10 МБ.",
+    sending: "Надсилаємо…",
+  },
+  de: {
+    send: "Die Anfrage konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
+    files: "Die Fotos dürfen zusammen höchstens 10 MB groß sein.",
+    sending: "Wird gesendet…",
+  },
+  en: {
+    send: "We could not send your request. Check your connection and try again.",
+    files: "The total size of the photos must not exceed 10 MB.",
+    sending: "Sending…",
+  },
+};
 
 export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const copy = formCopy[locale];
   const fields = getOrderFieldCopy(locale);
   const electrical = getElectricalCopy(locale);
@@ -40,10 +61,45 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     return () => window.removeEventListener("select-order-service", selectService);
   }, []);
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!consent || !event.currentTarget.reportValidity()) return;
-    setSubmitted(true);
+    const form = event.currentTarget;
+    if (!consent || !form.reportValidity() || submitting) return;
+
+    const formData = new FormData(form);
+    const photos = formData.getAll("photos").filter((value): value is File => value instanceof File && value.size > 0);
+    const totalPhotoSize = photos.reduce((total, photo) => total + photo.size, 0);
+    const status = errorCopy[locale] ?? errorCopy.en!;
+
+    if (totalPhotoSize > 10 * 1024 * 1024) {
+      setSubmitError(status.files);
+      return;
+    }
+
+    formData.set("_subject", `New ${service} request — Umzughilfe`);
+    formData.set("_template", "table");
+    formData.set("_captcha", "false");
+    formData.set("_url", window.location.href);
+
+    setSubmitting(true);
+    setSubmitError("");
+
+    try {
+      const response = await fetch(formEndpoint, {
+        method: "POST",
+        body: formData,
+        headers: { Accept: "application/json" },
+      });
+      const result = await response.json().catch(() => null) as { success?: boolean | string } | null;
+      if (!response.ok || (result?.success !== true && result?.success !== "true")) throw new Error("Submission failed");
+      setSubmitted(true);
+      form.reset();
+      setConsent(false);
+    } catch {
+      setSubmitError(status.send);
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -66,7 +122,8 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               </div>
             </div>
           ) : (
-            <form onSubmit={submit} noValidate={false}>
+            <form onSubmit={submit} noValidate={false} encType="multipart/form-data">
+              <input type="text" name="_honey" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>
                 {services.map(({ id }) => (
                   <button key={id} type="button" onClick={() => setService(id)} aria-pressed={service === id}
@@ -113,8 +170,10 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                 <label htmlFor="privacy" className="cursor-pointer text-sm leading-relaxed text-[#68686d]">{copy.privacy}</label>
               </div>
 
-              <Button type="submit" size="lg" disabled={!consent} className="mt-7 rounded-full bg-[#d52b1e] px-8 hover:bg-[#b62318]">
-                {copy.submit}
+              {submitError ? <p className="mt-5 text-sm font-semibold text-[#b62318]" role="alert">{submitError}</p> : null}
+
+              <Button type="submit" size="lg" disabled={!consent || submitting} className="mt-7 rounded-full bg-[#d52b1e] px-8 hover:bg-[#b62318]">
+                {submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
               </Button>
             </form>
           )}

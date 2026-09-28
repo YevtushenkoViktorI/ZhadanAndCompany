@@ -20,6 +20,26 @@ import type { ServiceId } from "@/types/service";
 type OrderType = ServiceId | "combo";
 const formEndpoint = "https://formsubmit.co/umzughilfe.schweiz@gmail.com";
 const formTarget = "formsubmit-response";
+const maxPhotoBytes = 10 * 1024 * 1024;
+const maxPhotoDimension = 1920;
+
+const photoCopy: Partial<Record<Locale, { hint: string; processing: string; ready: (count: number, size: string) => string }>> = {
+  uk: {
+    hint: "Максимум 10 МБ загалом. Перед надсиланням фотографії автоматично стискаються.",
+    processing: "Оптимізуємо фотографії…",
+    ready: (count, size) => `Підготовлено фото: ${count}, загальний розмір ${size} МБ.`,
+  },
+  de: {
+    hint: "Maximal 10 MB insgesamt. Fotos werden vor dem Senden automatisch komprimiert.",
+    processing: "Fotos werden optimiert…",
+    ready: (count, size) => `${count} Foto(s) vorbereitet, insgesamt ${size} MB.`,
+  },
+  en: {
+    hint: "Maximum 10 MB in total. Photos are compressed automatically before sending.",
+    processing: "Optimizing photos…",
+    ready: (count, size) => `${count} photo(s) prepared, ${size} MB total.`,
+  },
+};
 
 const errorCopy: Partial<Record<Locale, { send: string; activation: string; files: string; sending: string }>> = {
   uk: {
@@ -49,15 +69,20 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   const subjectRef = useRef<HTMLInputElement>(null);
   const summaryRef = useRef<HTMLInputElement>(null);
   const sourceUrlRef = useRef<HTMLInputElement>(null);
+  const photoSelectionRef = useRef(0);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState("");
+  const [photoStatus, setPhotoStatus] = useState("");
+  const [processingPhotos, setProcessingPhotos] = useState(false);
+  const [photoLimitExceeded, setPhotoLimitExceeded] = useState(false);
   const copy = formCopy[locale];
   const fields = getOrderFieldCopy(locale);
   const electrical = getElectricalCopy(locale);
   const hasTwoAddresses = service === "moving" || service === "delivery" || service === "combo";
+  const photoText = photoCopy[locale] ?? photoCopy.en!;
 
   useEffect(() => {
     function selectService(event: Event) {
@@ -87,15 +112,16 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    if (!consent || !form.reportValidity() || submitting) return;
+    if (!consent || !form.reportValidity() || submitting || processingPhotos || photoLimitExceeded) return;
 
     const formData = new FormData(form);
     const photos = formData.getAll("photos").filter((value): value is File => value instanceof File && value.size > 0);
     const totalPhotoSize = photos.reduce((total, photo) => total + photo.size, 0);
     const status = errorCopy[locale] ?? errorCopy.en!;
 
-    if (totalPhotoSize > 10 * 1024 * 1024) {
+    if (totalPhotoSize > maxPhotoBytes) {
       setSubmitError(status.files);
+      setPhotoLimitExceeded(true);
       return;
     }
 
@@ -129,7 +155,49 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
     setSubmitting(false);
     setSubmitted(true);
     setConsent(false);
+    setPhotoStatus("");
+    setPhotoLimitExceeded(false);
     document.querySelector<HTMLFormElement>(`form[target="${formTarget}"]`)?.reset();
+  }
+
+  async function preparePhotos(event: React.ChangeEvent<HTMLInputElement>) {
+    const input = event.currentTarget;
+    const selectedFiles = Array.from(input.files ?? []);
+    const selectionId = ++photoSelectionRef.current;
+    setSubmitError("");
+    setPhotoLimitExceeded(false);
+
+    if (selectedFiles.length === 0) {
+      setPhotoStatus("");
+      input.setCustomValidity("");
+      return;
+    }
+
+    setProcessingPhotos(true);
+    setPhotoStatus(photoText.processing);
+
+    try {
+      const optimizedFiles = await Promise.all(selectedFiles.map(compressPhoto));
+      if (selectionId !== photoSelectionRef.current) return;
+
+      const transfer = new DataTransfer();
+      optimizedFiles.forEach((file) => transfer.items.add(file));
+      input.files = transfer.files;
+
+      const totalSize = optimizedFiles.reduce((total, file) => total + file.size, 0);
+      const exceedsLimit = totalSize > maxPhotoBytes;
+      input.setCustomValidity(exceedsLimit ? (errorCopy[locale] ?? errorCopy.en!).files : "");
+      setPhotoLimitExceeded(exceedsLimit);
+      setPhotoStatus(exceedsLimit
+        ? (errorCopy[locale] ?? errorCopy.en!).files
+        : photoText.ready(optimizedFiles.length, (totalSize / 1024 / 1024).toFixed(1)));
+    } catch {
+      input.setCustomValidity((errorCopy[locale] ?? errorCopy.en!).files);
+      setPhotoLimitExceeded(true);
+      setPhotoStatus((errorCopy[locale] ?? errorCopy.en!).files);
+    } finally {
+      if (selectionId === photoSelectionRef.current) setProcessingPhotos(false);
+    }
   }
 
   return (
@@ -216,7 +284,15 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
                     ))}
                   </RadioGroup>
                 </Field>
-                <Field label={copy.photos} className="sm:col-span-2"><Input name="photos" type="file" accept="image/*" multiple className="h-12 rounded-xl bg-[#fafaf8] file:me-3" /></Field>
+                <Field label={copy.photos} className="sm:col-span-2">
+                  <Input name="photos" type="file" accept="image/*" multiple onChange={preparePhotos} disabled={processingPhotos} className="h-12 rounded-xl bg-[#fafaf8] file:me-3" />
+                  <p className="mt-2 text-sm text-[#68686d]">{photoText.hint}</p>
+                  {photoStatus ? (
+                    <p className={`mt-1 text-sm font-medium ${photoLimitExceeded ? "text-[#b62318]" : "text-emerald-700"}`} role={photoLimitExceeded ? "alert" : "status"}>
+                      {photoStatus}
+                    </p>
+                  ) : null}
+                </Field>
                 <Field label={fields.comment} className="sm:col-span-2"><Textarea name="details" rows={5} className="min-h-32 rounded-xl bg-[#fafaf8]" /></Field>
               </div>
 
@@ -227,8 +303,8 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
               {submitError ? <p className="mt-5 text-sm font-semibold text-[#b62318]" role="alert">{submitError}</p> : null}
 
-              <Button type="submit" size="lg" disabled={!consent || submitting} className="mt-7 rounded-full bg-[#d52b1e] px-8 hover:bg-[#b62318]">
-                {submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
+              <Button type="submit" size="lg" disabled={!consent || submitting || processingPhotos || photoLimitExceeded} className="mt-7 rounded-full bg-[#d52b1e] px-8 hover:bg-[#b62318]">
+                {processingPhotos ? photoText.processing : submitting ? (errorCopy[locale] ?? errorCopy.en!).sending : copy.submit}
               </Button>
               </form>
             </div>
@@ -241,6 +317,33 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
 function Field({ label, className, children }: { label: string; className?: string; children: React.ReactNode }) {
   return <label className={className}><span className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#4d4d50]">{label}</span>{children}</label>;
+}
+
+async function compressPhoto(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+
+  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  const scale = Math.min(1, maxPhotoDimension / Math.max(bitmap.width, bitmap.height));
+  const width = Math.max(1, Math.round(bitmap.width * scale));
+  const height = Math.max(1, Math.round(bitmap.height * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const context = canvas.getContext("2d");
+
+  if (!context) {
+    bitmap.close();
+    return file;
+  }
+
+  context.drawImage(bitmap, 0, 0, width, height);
+  bitmap.close();
+
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/jpeg", 0.82));
+  if (!blob || blob.size >= file.size) return file;
+
+  const filename = file.name.replace(/\.[^.]+$/, "") || "photo";
+  return new File([blob], `${filename}.jpg`, { type: "image/jpeg", lastModified: file.lastModified });
 }
 
 function ServiceFields({ service, fields, electrical }: { service: OrderType; fields: ReturnType<typeof getOrderFieldCopy>; electrical: ReturnType<typeof getElectricalCopy> }) {

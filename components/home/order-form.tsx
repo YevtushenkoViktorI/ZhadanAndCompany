@@ -19,7 +19,6 @@ import type { ServiceId } from "@/types/service";
 
 type OrderType = ServiceId | "combo";
 const formEndpoint = "https://formsubmit.co/umzughilfe.schweiz@gmail.com";
-const formTarget = "formsubmit-response";
 const maxPhotoBytes = 10 * 1024 * 1024;
 const maxPhotoDimension = 1920;
 
@@ -65,10 +64,10 @@ const errorCopy: Partial<Record<Locale, { send: string; activation: string; file
 export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
   const formCardRef = useRef<HTMLDivElement>(null);
   const successTitleRef = useRef<HTMLHeadingElement>(null);
-  const pendingSubmissionRef = useRef(false);
   const subjectRef = useRef<HTMLInputElement>(null);
   const summaryRef = useRef<HTMLInputElement>(null);
   const sourceUrlRef = useRef<HTMLInputElement>(null);
+  const nextUrlRef = useRef<HTMLInputElement>(null);
   const photoSelectionRef = useRef(0);
   const [service, setService] = useState<OrderType>("moving");
   const [consent, setConsent] = useState(false);
@@ -94,6 +93,15 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
 
     window.addEventListener("select-order-service", selectService);
     return () => window.removeEventListener("select-order-service", selectService);
+  }, []);
+
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("submitted") !== "1") return;
+    url.searchParams.delete("submitted");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+    const frame = window.requestAnimationFrame(() => setSubmitted(true));
+    return () => window.cancelAnimationFrame(frame);
   }, []);
 
   useEffect(() => {
@@ -142,22 +150,13 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
       summaryRef.current.value = `${serviceTitle}; ${customerName}; ${customerPhone}; ${requestedDate}`;
     }
     if (sourceUrlRef.current) sourceUrlRef.current.value = window.location.href;
+    if (nextUrlRef.current) {
+      nextUrlRef.current.value = `${window.location.origin}${window.location.pathname}?submitted=1#order`;
+    }
 
     setSubmitting(true);
     setSubmitError("");
-    pendingSubmissionRef.current = true;
     form.submit();
-  }
-
-  function completeSubmission() {
-    if (!pendingSubmissionRef.current) return;
-    pendingSubmissionRef.current = false;
-    setSubmitting(false);
-    setSubmitted(true);
-    setConsent(false);
-    setPhotoStatus("");
-    setPhotoLimitExceeded(false);
-    document.querySelector<HTMLFormElement>(`form[target="${formTarget}"]`)?.reset();
   }
 
   async function preparePhotos(event: React.ChangeEvent<HTMLInputElement>) {
@@ -203,12 +202,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
   return (
     <section id="order" className="scroll-mt-20 bg-[#f5f4f1] py-16 text-[#1d1d1f] sm:py-24">
       <Container className="max-w-5xl">
-        <iframe
-          name={formTarget}
-          title="Form submission response"
-          className="hidden"
-          onLoad={completeSubmission}
-        />
         <div className="mx-auto max-w-2xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#d52b1e]">{dictionary.hero.eyebrow}</p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">{dictionary.order.title}</h2>
@@ -234,7 +227,6 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               onSubmit={submit}
               action={formEndpoint}
               method="POST"
-              target={formTarget}
               noValidate={false}
               encType="multipart/form-data"
               inert={submitted}
@@ -245,6 +237,7 @@ export function OrderForm({ locale, dictionary }: { locale: Locale; dictionary: 
               <input ref={subjectRef} type="hidden" name="_subject" />
               <input ref={summaryRef} type="hidden" name="Короткий опис" />
               <input ref={sourceUrlRef} type="hidden" name="_url" />
+              <input ref={nextUrlRef} type="hidden" name="_next" />
               <input type="hidden" name="_template" value="table" />
               <input type="hidden" name="_captcha" value="false" />
               <div className="flex flex-wrap gap-2" role="group" aria-label={dictionary.navigation.services}>

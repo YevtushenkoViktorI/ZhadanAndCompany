@@ -1,0 +1,11 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "umzughilfe-order-email",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-28",
+  "vars": {
+    "ALLOWED_ORIGIN": "https://yevtushenkoviktori.github.io",
+    "EMAIL_TO": "umzughilfe.schweiz@gmail.com",
+    "EMAIL_FROM": "Umzughilfe Switzerland <onboarding@resend.dev>"
+  }
+}
